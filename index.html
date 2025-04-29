@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>บันทึกรายรับ-รายจ่าย</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main>
+    <h1>ระบบบันทึกรายรับ-รายจ่าย</h1>
+
+    <section class="form-section">
+        <form id="expense-form">
+            <input type="text" id="category" placeholder="หมวดหมู่" required>
+            <input type="number" id="amount" placeholder="จำนวนเงิน" required>
+            <input type="date" id="date" required>
+            <select id="type" required>
+                <option value="income">รายรับ</option>
+                <option value="expense">รายจ่าย</option>
+            </select>
+            <button type="submit">บันทึก</button>
+        </form>
+    </section>
+
+    <section class="summary">
+        <h2 id="total-income">รายรับรวม: ฿0.00</h2>
+        <h2 id="total-expense">รายจ่ายรวม: ฿0.00</h2>
+        <h2 id="balance">ยอดคงเหลือ: ฿0.00</h2>
+    </section>
+
+    <section class="table-section">
+        <table id="record-table">
+            <thead>
+                <tr>
+                    <th>หมวดหมู่</th>
+                    <th>จำนวนเงิน</th>
+                    <th>วันที่</th>
+                    <th>ประเภท</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <section class="chart">
+        <h2>กราฟรายรับ-รายจ่าย</h2>
+        <canvas id="expenseChart" width="400" height="400"></canvas>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
