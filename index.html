@@ -19,13 +19,14 @@
       <input id="description" type="text" placeholder="คำอธิบาย..." class="p-2 border rounded-md" />
       <input id="amount" type="number" placeholder="จำนวนเงิน (+/-)" class="p-2 border rounded-md" />
       
+      <!-- เพิ่มหมวดหมู่ -->
       <select id="category" class="p-2 border rounded-md">
-    <option value="รายรับ">💼 รายรับ</option>
-    <option value="อาหาร">🍔 อาหาร</option>
-    <option value="เดินทาง">🚗 เดินทาง</option>
-    <option value="ค่าสาธารณูปโภค">⚡ ค่าน้ำค่าไฟ</option>
-  </select>
-      
+        <option value="รายรับ">💼 รายรับ</option>
+        <option value="อาหาร">🍔 อาหาร</option>
+        <option value="เดินทาง">🚗 เดินทาง</option>
+        <option value="ค่าสาธารณูปโภค">⚡ ค่าน้ำค่าไฟ</option>
+      </select>
+
       <button onclick="addTransaction()" class="bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
         เพิ่มรายการ
       </button>
@@ -40,13 +41,27 @@
     let transactions = [];
     let totalBalance = 0;
 
+    // ฟังก์ชันแสดงรายการที่เพิ่มเข้าไป
     function renderTransaction(t) {
       const li = document.createElement('li');
-      li.className = `p-3 rounded-md ${t.amount < 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`;
-      li.textContent = `${t.description} : ${t.amount.toFixed(2)} บาท`;
+
+      // กำหนดคลาสพื้นหลังและสีตามรายรับ/รายจ่าย
+      li.className = `flex justify-between items-center p-3 rounded-md shadow 
+                      ${t.amount < 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`;
+
+      // สร้างโครงสร้างภายใน <li>
+      li.innerHTML = `
+        <div>
+          <div class="font-semibold">${t.category}</div>
+          <div class="text-sm text-gray-700">${t.description}</div>
+        </div>
+        <div class="text-right font-bold">${t.amount.toFixed(2)} บาท</div>
+      `;
+
       listEl.appendChild(li);
     }
 
+    // อัปเดตข้อมูลหลังจากเพิ่มรายการใหม่
     function updateUI() {
       listEl.innerHTML = '';
       totalBalance = 0;
@@ -59,16 +74,18 @@
       balanceEl.textContent = totalBalance.toFixed(2);
     }
 
+    // ฟังก์ชันเพิ่มรายการใหม่
     function addTransaction() {
       const description = document.getElementById('description').value.trim();
       const amount = parseFloat(document.getElementById('amount').value);
+      const category = document.getElementById('category').value;
 
       if (!description || isNaN(amount)) {
         alert('กรุณากรอกข้อมูลให้ครบถ้วน');
         return;
       }
 
-      const transaction = { description, amount };
+      const transaction = { description, amount, category };
       transactions.push(transaction);
       updateUI();
 
@@ -79,4 +96,3 @@
 
 </body>
 </html>
-
