@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ระบบรายรับ-รายจ่าย</title>
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-left: 5px solid #007bff;
+      border-radius: 5px;
+    }
+    .transaction-item span {
+      flex-grow: 1;
+    }
+    .delete-btn {
+      background: red;
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .total {
+      text-align: right;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 20px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💰 ระบบรายรับ-รายจ่าย</h2>
+
+    <input type="text" id="description" placeholder="คำอธิบาย">
+    <input type="number" id="amount" placeholder="จำนวนเงิน (ใส่ - สำหรับรายจ่าย)">
+    
+    <select id="category">
+      <option value="💼 รายรับ">💼 รายรับ</option>
+      <option value="🍔 อาหาร">🍔 อาหาร</option>
+      <option value="🚗 เดินทาง">🚗 เดินทาง</option>
+      <option value="🏠 ที่พัก">🏠 ที่พัก</option>
+      <option value="⚡ ค่าสาธารณูปโภค">⚡ ค่าสาธารณูปโภค</option>
+    </select>
+
+    <button onclick="addTransaction()">➕ เพิ่มรายการ</button>
+
+    <ul id="transaction-list"></ul>
+
+    <div class="total" id="total">ยอดรวม: 0 บาท</div>
+  </div>
+
+  <script>
+    let transactions = [];
+    let total = 0;
+
+    function addTransaction() {
+      const desc = document.getElementById('description').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      const category = document.getElementById('category').value;
+
+      if (!desc || isNaN(amount)) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        return;
+      }
+
+      const transaction = { description: desc, amount: amount, category: category };
+      transactions.push(transaction);
+      total += amount;
+
+      document.getElementById('description').value = '';
+      document.getElementById('amount').value = '';
+
+      updateDisplay();
+    }
+
+    function deleteTransaction(index) {
+      total -= transactions[index].amount;
+      transactions.splice(index, 1);
+      updateDisplay();
+    }
+
+    function renderTransaction(t, index) {
+      const list = document.getElementById('transaction-list');
+      const item = document.createElement('li');
+      item.classList.add('transaction-item');
+      item.innerHTML = `
+        <span>${t.category} - ${t.description}: ${t.amount} บาท</span>
+        <button class="delete-btn" onclick="deleteTransaction(${index})">ลบ</button>
+      `;
+      list.appendChild(item);
+    }
+
+    function updateDisplay() {
+      const list = document.getElementById('transaction-list');
+      list.innerHTML = '';
+      transactions.forEach((t, index) => renderTransaction(t, index));
+      document.getElementById('total').innerText = `ยอดรวม: ${total} บาท`;
+    }
+  </script>
+</body>
+</html>
