@@ -72,7 +72,7 @@ public class ExpenseTracker {
         System.out.println("1. รายรับ");
         System.out.println("2. อาหาร");
         System.out.println("3. เดินทาง");
-        System.out.println("5. ค่าสาธารณูปโภค");
+        System.out.println("4. ค่าสาธารณูปโภค");
         System.out.print("กรุณาเลือกหมวดหมู่: ");
         int categoryChoice = scanner.nextInt();
         scanner.nextLine(); // consume newline
