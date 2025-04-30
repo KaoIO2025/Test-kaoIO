@@ -18,6 +18,14 @@
     <div class="grid grid-cols-1 gap-3 mb-4">
       <input id="description" type="text" placeholder="คำอธิบาย..." class="p-2 border rounded-md" />
       <input id="amount" type="number" placeholder="จำนวนเงิน (+/-)" class="p-2 border rounded-md" />
+      
+      <select id="category" class="p-2 border rounded-md">
+    <option value="รายรับ">💼 รายรับ</option>
+    <option value="อาหาร">🍔 อาหาร</option>
+    <option value="เดินทาง">🚗 เดินทาง</option>
+    <option value="ค่าสาธารณูปโภค">⚡ ค่าน้ำค่าไฟ</option>
+  </select>
+      
       <button onclick="addTransaction()" class="bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
         เพิ่มรายการ
       </button>
