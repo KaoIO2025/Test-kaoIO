@@ -75,7 +75,15 @@
       font-weight: bold;
       text-align: right;
       font-size: 18px;
-      margin-top: 20px;
+      margin-top: 10px;
+    }
+    .summary {
+      background: #eef;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
     }
     canvas {
       margin-top: 30px;
@@ -88,6 +96,7 @@
 
     <input type="text" id="description" placeholder="คำอธิบาย">
     <input type="number" id="amount" placeholder="จำนวนเงิน (ใส่ - สำหรับรายจ่าย)">
+    <input type="date" id="date">
     
     <select id="category">
       <option value="💼 รายรับ">💼 รายรับ</option>
@@ -100,18 +109,25 @@
     <button onclick="addTransaction()">➕ เพิ่มรายการ</button>
 
     <ul id="transaction-list"></ul>
-    <div class="total" id="total">ยอดรวม: 0 บาท</div>
+
+    <div class="summary">
+      <p id="income">💼 รายรับ: 0 บาท</p>
+      <p id="expense">🧾 รายจ่าย: 0 บาท</p>
+    </div>
+
+    <div class="total" id="total">ยอดรวมสุทธิ: 0 บาท</div>
 
     <canvas id="expenseChart" width="400" height="400"></canvas>
   </div>
 
   <script>
     let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-    let total = transactions.reduce((sum, t) => sum + t.amount, 0);
+    let total = 0;
 
     function addTransaction() {
       const desc = document.getElementById('description').value;
       const amount = parseFloat(document.getElementById('amount').value);
+      const date = document.getElementById('date').value;
       const category = document.getElementById('category').value;
 
       if (!desc || isNaN(amount)) {
@@ -119,19 +135,24 @@
         return;
       }
 
-      const transaction = { description: desc, amount: amount, category: category };
+      const transaction = {
+        description: desc,
+        amount: amount,
+        category: category,
+        date: date || new Date().toISOString().split('T')[0]
+      };
+
       transactions.push(transaction);
-      total += amount;
 
       document.getElementById('description').value = '';
       document.getElementById('amount').value = '';
+      document.getElementById('date').value = '';
 
       saveToLocalStorage();
       updateDisplay();
     }
 
     function deleteTransaction(index) {
-      total -= transactions[index].amount;
       transactions.splice(index, 1);
       saveToLocalStorage();
       updateDisplay();
@@ -142,6 +163,7 @@
       document.getElementById('description').value = t.description;
       document.getElementById('amount').value = t.amount;
       document.getElementById('category').value = t.category;
+      document.getElementById('date').value = t.date;
       deleteTransaction(index);
     }
 
@@ -150,9 +172,14 @@
       const item = document.createElement('li');
       item.classList.add('transaction-item');
       item.innerHTML = `
-        <span>${t.category} - ${t.description}: ${t.amount} บาท</span>
-        <button class="delete-btn" onclick="deleteTransaction(${index})">ลบ</button>
-        <button class="edit-btn" onclick="editTransaction(${index})">แก้ไข</button>
+        <span>
+          ${t.category} - ${t.description}: ${t.amount} บาท<br>
+          <small>📅 ${t.date}</small>
+        </span>
+        <span>
+          <button class="delete-btn" onclick="deleteTransaction(${index})">ลบ</button>
+          <button class="edit-btn" onclick="editTransaction(${index})">แก้ไข</button>
+        </span>
       `;
       list.appendChild(item);
     }
@@ -160,8 +187,21 @@
     function updateDisplay() {
       const list = document.getElementById('transaction-list');
       list.innerHTML = '';
-      transactions.forEach((t, index) => renderTransaction(t, index));
-      document.getElementById('total').innerText = `ยอดรวม: ${total} บาท`;
+      total = 0;
+      let income = 0;
+      let expense = 0;
+
+      transactions.forEach((t, index) => {
+        renderTransaction(t, index);
+        total += t.amount;
+        if (t.amount > 0) income += t.amount;
+        else expense += Math.abs(t.amount);
+      });
+
+      document.getElementById('total').innerText = `ยอดรวมสุทธิ: ${total} บาท`;
+      document.getElementById('income').innerText = `💼 รายรับ: ${income} บาท`;
+      document.getElementById('expense').innerText = `🧾 รายจ่าย: ${expense} บาท`;
+
       renderChart();
     }
 
@@ -178,7 +218,7 @@
       });
 
       const ctx = document.getElementById('expenseChart').getContext('2d');
-      if (window.pieChart) window.pieChart.destroy(); // ลบกราฟเดิมก่อนวาดใหม่
+      if (window.pieChart) window.pieChart.destroy();
 
       window.pieChart = new Chart(ctx, {
         type: 'pie',
@@ -207,5 +247,6 @@
   </script>
 </body>
 </html>
+
 
 
