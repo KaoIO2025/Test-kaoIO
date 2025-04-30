@@ -64,6 +64,15 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    .edit-btn {
+      background: orange;
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
     .total {
       text-align: right;
       font-weight: bold;
@@ -125,6 +134,15 @@
       updateDisplay();
     }
 
+    function editTransaction(index) {
+      const t = transactions[index];
+      document.getElementById('description').value = t.description;
+      document.getElementById('amount').value = t.amount;
+      document.getElementById('category').value = t.category;
+
+      deleteTransaction(index);
+    }
+
     function renderTransaction(t, index) {
       const list = document.getElementById('transaction-list');
       const item = document.createElement('li');
@@ -132,6 +150,7 @@
       item.innerHTML = `
         <span>${t.category} - ${t.description}: ${t.amount} บาท</span>
         <button class="delete-btn" onclick="deleteTransaction(${index})">ลบ</button>
+        <button class="edit-btn" onclick="editTransaction(${index})">แก้ไข</button>
       `;
       list.appendChild(item);
     }
@@ -145,3 +164,4 @@
   </script>
 </body>
 </html>
+
