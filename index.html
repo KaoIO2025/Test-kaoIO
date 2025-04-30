@@ -1,57 +1,74 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>บันทึกรายรับ-รายจ่าย</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบรายรับ-รายจ่าย</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-<main>
-    <h1>ระบบบันทึกรายรับ-รายจ่าย</h1>
+  <div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-xl">
+    <h1 class="text-2xl font-bold text-center text-indigo-700 mb-4">บัญชีรายรับ - รายจ่าย</h1>
 
-    <section class="form-section">
-        <form id="expense-form">
-            <input type="text" id="category" placeholder="หมวดหมู่" required>
-            <input type="number" id="amount" placeholder="จำนวนเงิน" required>
-            <input type="date" id="date" required>
-            <select id="type" required>
-                <option value="income">รายรับ</option>
-                <option value="expense">รายจ่าย</option>
-            </select>
-            <button type="submit">บันทึก</button>
-        </form>
-    </section>
+    <div class="text-center text-lg mb-6">
+      ยอดเงินคงเหลือ: <span id="balance" class="font-bold text-green-600">0.00</span> บาท
+    </div>
 
-    <section class="summary">
-        <h2 id="total-income">รายรับรวม: ฿0.00</h2>
-        <h2 id="total-expense">รายจ่ายรวม: ฿0.00</h2>
-        <h2 id="balance">ยอดคงเหลือ: ฿0.00</h2>
-    </section>
+    <div class="grid grid-cols-1 gap-3 mb-4">
+      <input id="description" type="text" placeholder="คำอธิบาย..." class="p-2 border rounded-md" />
+      <input id="amount" type="number" placeholder="จำนวนเงิน (+/-)" class="p-2 border rounded-md" />
+      <button onclick="addTransaction()" class="bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">
+        เพิ่มรายการ
+      </button>
+    </div>
 
-    <section class="table-section">
-        <table id="record-table">
-            <thead>
-                <tr>
-                    <th>หมวดหมู่</th>
-                    <th>จำนวนเงิน</th>
-                    <th>วันที่</th>
-                    <th>ประเภท</th>
-                    <th>การจัดการ</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </section>
+    <ul id="transaction-list" class="space-y-2"></ul>
+  </div>
 
-    <section class="chart">
-        <h2>กราฟรายรับ-รายจ่าย</h2>
-        <canvas id="expenseChart" width="400" height="400"></canvas>
-    </section>
-</main>
+  <script>
+    const balanceEl = document.getElementById('balance');
+    const listEl = document.getElementById('transaction-list');
+    let transactions = [];
+    let totalBalance = 0;
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+    function renderTransaction(t) {
+      const li = document.createElement('li');
+      li.className = `p-3 rounded-md ${t.amount < 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`;
+      li.textContent = `${t.description} : ${t.amount.toFixed(2)} บาท`;
+      listEl.appendChild(li);
+    }
+
+    function updateUI() {
+      listEl.innerHTML = '';
+      totalBalance = 0;
+
+      transactions.forEach(t => {
+        renderTransaction(t);
+        totalBalance += t.amount;
+      });
+
+      balanceEl.textContent = totalBalance.toFixed(2);
+    }
+
+    function addTransaction() {
+      const description = document.getElementById('description').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      if (!description || isNaN(amount)) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+      }
+
+      const transaction = { description, amount };
+      transactions.push(transaction);
+      updateUI();
+
+      document.getElementById('description').value = '';
+      document.getElementById('amount').value = '';
+    }
+  </script>
 
 </body>
 </html>
+
